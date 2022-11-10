@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 26, 2022 at 06:26 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 8.1.6
+-- Generation Time: Nov 10, 2022 at 03:36 PM
+-- Server version: 10.4.25-MariaDB
+-- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,14 +30,32 @@ SET time_zone = "+00:00";
 CREATE TABLE `game` (
   `GameId` int(11) NOT NULL,
   `GameName` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `GameProductCode` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `GameProductCode` varchar(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Boxart` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `GameDescription` varchar(1000) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `MAPRating` varchar(4) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MPAARating` varchar(4) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Platform` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `Version` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Version` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `GameStudioId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `game`
+--
+
+INSERT INTO `game` (`GameId`, `GameName`, `GameProductCode`, `Boxart`, `GameDescription`, `MPAARating`, `Platform`, `Version`, `GameStudioId`) VALUES
+(1, 'League of Legends', NULL, '', 'League of Legends is a team-based strategy game where two teams of five powerful champions face off to destroy the other\'s base. Choose from over 140 champions to make epic plays, secure kills, and take down towers as you battle your way to victory.', 'T', 'GeForce Now, Microsoft Windows, macOS, Mac operating systems', '12.21', 1),
+(2, 'Valorant', NULL, '', 'Valorant is a free-to-play first-person hero shooter developed and published by Riot Games, for Microsoft Windows. Teased under the codename Project A in October 2019, the game began a closed beta period with limited access on April 7, 2020, followed by a release on June 2, 2020. The development of the game started in 2014. Valorant takes inspiration from the Counter-Strike series of tactical shooters, borrowing several mechanics such as the buy menu, spray patterns, and inaccuracy while moving.', 'T', 'Microsoft Windows', '5.09', 1),
+(3, 'FIFA 22', NULL, '', 'FIFA 22 is a football simulation video game published by Electronic Arts. It is the 29th installment in the FIFA series, and was released worldwide on 1 October 2021 for Microsoft Windows, Nintendo Switch, PlayStation 4, PlayStation 5, Xbox One and Xbox Series X/S.[1] Players who pre-ordered the ultimate edition, however, received four days of early access and were able to play the game from 27 September.', 'E', 'Microsoft Windows, Nintendo Switch, PlayStation 4, PlayStation 5, Stadia. Xbox One, Xbox Series X/S', 'Standard', 2),
+(4, 'Just Dance', 'SDNP41', '', 'Just Dance is a motion-based dance video game for multiple players, with each game including a collection of classic and modern songs each with its own dance choreographies.', 'E10+', 'Wii, Wii U, PlayStation 3, PlayStation 4, PlayStation 5, Xbox 360, Xbox One, Xbox Series X/S, iOS, Android, Nintendo Switch, Microsoft Windows, macOS, Stadia', NULL, 3),
+(5, 'Just Dance 2', 'SD2E41', '', 'Just Dance 2 is a 2010 dance rhythm game developed by Ubisoft Paris and Ubisoft Milan and published by Ubisoft. The game was released exclusively for the Wii on October 12, 2010, in North America and in Australia and Europe on October 14, 2010, as a sequel to Just Dance and the second main installment of the series.', 'E10+', 'Wii', '2', 3),
+(6, 'Just Dance 3', 'SJDK41', '', 'Just Dance 3 is a 2011 dance rhythm game released on the Wii, Xbox 360, and PlayStation 3 with Kinect and Move support respectively for the latter two. It is part of the Just Dance video game series published by Ubisoft originally on the Wii and the third main installment of the series.', 'E10+', 'Wii, Xbox 360, PlayStation 3', '3', 3),
+(7, 'Just Dance 4', 'SJXE41', '', 'Just Dance 4 is a 2012 music rhythm game developed and published by Ubisoft as the fourth main installment of the Just Dance series. Announced at E3 2012 by Flo Rida and Aisha Tyler, it was released on the Wii, the Wii U, the PlayStation 3 (with PlayStation Move), and the Xbox 360 (with Kinect). The Wii, PlayStation Move and Kinect versions were released on October 2, 2012 in Europe and Australia and on October 9, 2012 in North America, The Wii U version was released on November 18, 2012 in North America and on November 30, 2012 in Europe and Australia, as a launch title for the console.', 'E10+', 'Wii, Xbox 360, PlayStation 3, Wii U', '4', 3),
+(8, 'Just Dance 2014', 'SJ7E41', '', 'Just Dance 2014 is a 2013 dance rhythm game developed by Ubisoft Paris, Ubisoft Milan, Ubisoft Reflections, Ubisoft Bucharest, Ubisoft Pune, Ubisoft Montpellier and Ubisoft Barcelona and published by Ubisoft. The fifth main installment of the Just Dance series, it was announced at Ubisoft\'s E3 2013 press event, and released for PlayStation 3, Xbox 360, Wii, and Wii U on 9 October 2013, and for PlayStation 4 and Xbox One as a launch title on 15 November and 22 November 2013 respectively.', 'E10+', 'PlayStation 3, Wii, Wii U, Xbox 360, PlayStation 4, Xbox One', '2014', 3),
+(9, 'Super Mario Galaxy', 'RMGE01', '', 'Become Mario as he traverses gravity-bending galaxies, traveling in and out of gravitational fields by blasting from planet to planet.', 'E', 'Wii, Switch', '1', 5),
+(10, 'Splatoon 3', 'AV5JA', '', 'Enter the Splatlands, a sun-scorched desert inhabited by battle-hardened Inklings and Octolings.', 'E10+', 'Switch', '1.2', 4),
+(11, 'Counter-Strike: Global Offensive', '730', '', 'Counter-Strike: Global Offensive (CS: GO) expands upon the team-based action gameplay that it pioneered when it was launched 19 years ago.', 'T', 'PC (Steam), SteamDeck', '1.38.4.6', 6),
+(12, 'Puyo Puyo Tsū', 'SHVCAXPJ', '', 'Stack and chain your Puyo combos to negate the Garbage puyos sent by your opponent.', '-', 'Super Famicom, Sega Saturn, PlayStation, PlayStation 2, Mega Drive, Game Gear, Game Boy, PC (CD-ROM), PC-98, PC Engine CD, Neo-Geo Pocket, WonderSwan, Wii, 3DS, PSOne Classics, Switch, Mega Drive Mini', '1', 7);
 
 -- --------------------------------------------------------
 
@@ -52,6 +70,19 @@ CREATE TABLE `gamestudio` (
   `StudioDescription` varchar(1000) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Location` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `gamestudio`
+--
+
+INSERT INTO `gamestudio` (`gamestudio`, `Developer`, `Publisher`, `StudioDescription`, `Location`) VALUES
+(1, 'Riot Games', 'Riot Forge', 'Riot Games, Inc. is an American video game developer, publisher and esports tournament organizer based in Los Angeles, California. It was founded in September 2006 by Brandon Beck and Marc Merrill to develop League of Legends and went on to develop several spin-off games and the unrelated first-person shooter game Valorant. In 2011, Riot Games was acquired by Chinese conglomerate Tencent. Riot Games\' publishing arm, Riot Forge, oversees the production of League of Legends spin-offs by other developers. The company worked with Fortiche to release Arcane, a television series based on the League of Legends universe.', 'Los Angeles, United States'),
+(2, 'Electronics Arts Inc.', 'EA Sports', 'Electronic Arts Inc. (EA) is an American video game company headquartered in Redwood City, California. Founded in May 1982 by Apple employee Trip Hawkins, the company was a pioneer of the early home computer game industry and promoted the designers and programmers responsible for its games as \"software artists.\" EA published numerous games and some productivity software for personal computers, all of which were developed by external individuals or groups until 1987\'s Skate or Die!. The company shifted toward internal game studios, often through acquisitions, such as Distinctive Software becoming EA Canada in 1991.', 'California, United States'),
+(3, 'Ubisoft Paris', 'Ubisoft', 'Ubisoft Entertainment SA is a French video game company headquartered in Saint-Mandé with development studios across the world. Its video game franchises include Assassin\'s Creed, Far Cry, For Honor, Just Dance, Prince of Persia, Rabbids, Rayman, Tom Clancy\'s, and Watch Dogs.', 'Paris'),
+(4, 'Nintendo', 'Nintendo EDP', 'Nintendo Entertainment Planning & Development Division, commonly abbreviated as Nintendo EPD, is the largest division within the Japanese video game company Nintendo. ', 'Kyoto, Japan'),
+(5, 'Nintendo', 'Nintendo EAD', 'Nintendo Entertainment Analysis & Development Division, commonly abbreviated as Nintendo EAD and formerly known as Nintendo Research & Development No.4 Department.', 'Kyoto, Japan'),
+(6, 'Valve', 'Hidden Path Entertainment', 'Valve Corporation is an American video game developer, publisher, and digital distribution company headquartered in Bellevue, Washington.', 'Washington, United States'),
+(7, 'Compile', 'Compile', 'Compile Co., Ltd. (株式会社コンパイル Kabushiki-gaisha Konpairu) was a video game software developer founded on April 7, 1982. The company, originally known as Programmers-3', 'Japan');
 
 -- --------------------------------------------------------
 
@@ -222,13 +253,13 @@ ALTER TABLE `wishlistitem`
 -- AUTO_INCREMENT for table `game`
 --
 ALTER TABLE `game`
-  MODIFY `GameId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `GameId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `gamestudio`
 --
 ALTER TABLE `gamestudio`
-  MODIFY `gamestudio` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `gamestudio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `gtsitem`
