@@ -1,52 +1,34 @@
 <?php
 
-use GuzzleHttp\Client;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+//var_dump($_SERVER["REQUEST_METHOD"]);
+use Slim\Factory\AppFactory;
+
 require __DIR__ . '/vendor/autoload.php';
+require_once './includes/app_constants.php';
+require_once './includes/helpers/helper_functions.php';
 
-$client = new GuzzleHttp\Client(['base_uri' => 'https://anapioficeandfire.com/api/']);
+//--Step 1) Instantiate App.
+$app = AppFactory::create();
 
-$response = $client->request('GET', 'books');
+//-- Step 2) Add middleware.
+$app->addRoutingMiddleware();
+$app->addBodyParsingMiddleware();
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
-$data = $response->getBody()->getContents();
+//-- Step 3) Base Path
+$app->setBasePath("/game-api");
 
-function parseBooks($data) {
-    $tbs = "<table class='table table-striped'> <thead> <tr> <th>Type</th> <th>Name</th> <th>ISBN</th> <th>Publisher</th> </tr> </thead>";
-    $booksData = json_decode($data);
-    foreach ($booksData as $key => $book) {
-        $tbs .= "<tr>";
-        $tbs .= "<td>" . $book->mediaType . "</td>";
-        $tbs .= "<td>" . $book->name . "</td>";
-        $tbs .= "<td>" . $book->isbn . "</td>";
-        $tbs .= "<td>" . $book->publisher . "</td>";
-        $tbs .= "</tr>";
-    }
-    $tbs .= "</table>";
-    echo $tbs;
-}
-?>
+//-- Step 4) Include the files containing the definitions of the callbacks.
+require_once './includes/routes/studio_routes.php';
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Music API Client</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-  </head>
-  <body>
-    <div class="container">
-        <h1>Music API Client</h1>
-        <hr />
-        <h2>Tracks</h2>
-        <div id="tracksResult">
-            <h3>Tracklist</h3>
-            <div id="tracklist">
-                <?php
-                    parseBooks($data);
-                ?>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-  </body>
-</html>
+//-- Step 5) define app routes
+// $app->get("/studios", "handleGetAllStudios");
+$app->get('/hello', function (Request $request, Response $response, $args) {
+  $response->getBody()->write("Hello");
+  return $response;
+});
+
+// Run the app.
+$app->run();
