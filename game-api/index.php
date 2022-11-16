@@ -26,8 +26,11 @@ require_once './includes/routes/studio_routes.php';
 $app->get("/studios", "handleGetAllStudios");
 $app->post("/studios", "handleCreateStudio");
 $app->put("/studios", "handleUpdateStudio");
+
 $app->get("/studios/{studio_id}", "handleGetStudioById");
 $app->delete("/studios/{studio_id}", "handleDeleteStudio");
+
+$app->get("/studios/{studio_id}/games", "handleGetGamesByStudioId");
 
 // Run the app.
 $app->run();
