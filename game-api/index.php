@@ -2,7 +2,6 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-//var_dump($_SERVER["REQUEST_METHOD"]);
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -24,11 +23,8 @@ $app->setBasePath("/game-api");
 require_once './includes/routes/studio_routes.php';
 
 //-- Step 5) define app routes
-// $app->get("/studios", "handleGetAllStudios");
-$app->get('/hello', function (Request $request, Response $response, $args) {
-  $response->getBody()->write("Hello");
-  return $response;
-});
+$app->get("/studios", "handleGetAllStudios");
+$app->get("/studios/{studio_id}", "handleGetStudioById");
 
 // Run the app.
 $app->run();
