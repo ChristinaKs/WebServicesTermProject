@@ -74,3 +74,47 @@ function handleGetStudioById(Request $request, Response $response, array $args){
     $response->getBody()->write($response_data);
     return $response->withStatus($response_code);
 }
+
+// Callback for HTTP POST /studios
+function handleCreateStudio(Request $request, Response $response, array $args) {
+    $response_code = HTTP_OK;
+    $studio_model = new StudioModel();
+
+    $data = $request->getParsedBody();
+
+    //-- Go over the elements stored in the $data array and verify that they are valid.
+    $studio_id = "";
+    $studio_developer = "";
+    $studio_publisher = "";
+    $studio_location = "";
+
+    for ($i = 0; $i < count($data); $i++) {
+        $single_studio = $data[$i];
+
+        $studio_id = $single_studio["GameStudioId"];
+        $studio_developer = $single_studio["Developer"];
+        $studio_publisher = $single_studio["Publisher"];
+        $studio_location = $single_studio["Location"];
+
+        $new_studio = array(
+            "GameStudioId" => $studio_id,
+            "Developer" => $studio_developer,
+            "Publisher" => $studio_publisher,
+            "Location" => $studio_location
+        );
+
+        $studio_model->createstudio($new_studio);
+    }
+    
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("studioAdded", "The specified studio was Successfully created.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error creating the studio.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}

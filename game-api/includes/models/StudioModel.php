@@ -67,4 +67,13 @@ class StudioModel extends BaseModel{
         $data = $this->run($sql, [$studio_id])->fetch();
         return $data;
     }
+
+    /**
+     * Add a new studio to the database
+     * @param string $data
+     */
+    public function createStudio($data) {
+        $data = $this->insert("gamestudio", $data);
+        return $data;
+    }
 }

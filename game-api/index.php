@@ -24,6 +24,7 @@ require_once './includes/routes/studio_routes.php';
 
 //-- Step 5) define app routes
 $app->get("/studios", "handleGetAllStudios");
+$app->post("/studios", "handleCreateStudio");
 $app->get("/studios/{studio_id}", "handleGetStudioById");
 
 // Run the app.
