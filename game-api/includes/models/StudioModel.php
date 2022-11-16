@@ -76,4 +76,24 @@ class StudioModel extends BaseModel{
         $data = $this->insert("gamestudio", $data);
         return $data;
     }
+
+    /**
+     * Edit a studio in the database
+     * @param string $data
+     */
+    public function updateStudio($data, $where) {
+        $data = $this->update("gamestudio", $data, $where);
+        return $data;
+    }
+
+    /**
+     * Delete a studio from the database
+     * @param int $studio_id
+     * @return boolean if the studio was deleted
+     */
+    public function deleteStudio($studio_id) {
+        $sql = "DELETE FROM gamestudio WHERE GameStudioId = ?";
+        $data = $this->run($sql, [$studio_id]);
+        return $data;
+    }
 }
