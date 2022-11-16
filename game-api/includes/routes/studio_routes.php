@@ -2,9 +2,9 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-//var_dump($_SERVER["REQUEST_METHOD"]);
 use Slim\Factory\AppFactory;
 
+require_once __DIR__ . './../models/BaseModel.php';
 require_once __DIR__ . './../models/StudioModel.php';
 
 // Callback for HTTP GET /studios
@@ -31,10 +31,12 @@ function handleGetAllStudios(Request $request, Response $response, array $args){
     $requested_format = $request->getHeader('Accept');
 
     // Verify requested resource representation
-    if($requested_format[0] === APP_MEDIA_TYPE_JSON){
+    if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
         $response_data = json_encode($studios, JSON_INVALID_UTF8_SUBSTITUTE);
     } else {
-        $response->getBody()->write($response_data);
-        return $response->withStatus($response_code);
+        $response_data = json_encode(getErrorUnsupportedFormat());
+        $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
     }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
 }

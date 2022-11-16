@@ -16,3 +16,12 @@ function makeCustomJSONError($error_code, $error_message) {
     );    
     return json_encode($error_data);
 }
+
+// Helper function when POST, PUT, and DELETE requests are made
+function makeCustomJSONsuccess($success_code, $success_message){
+    $success_data = array(
+        "Successful:" => $success_code,
+        "Message:" => $success_message
+    );
+    return json_encode($success_data);
+}

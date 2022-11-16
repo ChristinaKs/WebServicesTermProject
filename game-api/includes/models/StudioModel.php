@@ -1,7 +1,8 @@
 <?php
 
 class StudioModel extends BaseModel{
-    private $table_name = "studios";
+    
+    private $table_name = "gamestudio";
 
     /**
      * A model class for the 'studios' database table.
@@ -18,7 +19,7 @@ class StudioModel extends BaseModel{
      * @return array A list of studios
      */
     public function getAllStudios(){
-        $sql = "SELECT * FROM studios";
+        $sql = "SELECT * FROM gamestudio";
         $data = $this->rows($sql);
         return $data;
     }
@@ -29,7 +30,7 @@ class StudioModel extends BaseModel{
      * @return array A list of studios containing the matches found
      */
     public function getWhereLikeDeveloper($developer){
-        $sql = "SELECT * FROM studios WHERE developer LIKE :developer";
+        $sql = "SELECT * FROM gamestudio WHERE developer LIKE :developer";
         $data = $this->run($sql, ["developer" => $developer . "%"])->fetchAll();
         return $data;
     }
@@ -40,7 +41,7 @@ class StudioModel extends BaseModel{
      * @return array A list of studios containing the matches found
      */
     public function getWhereLikePublisher($publisher){
-        $sql = "SELECT * FROM studios WHERE publisher LIKE :publisher";
+        $sql = "SELECT * FROM gamestudio WHERE publisher LIKE :publisher";
         $data = $this->run($sql, ["publisher" => $publisher . "%"])->fetchAll();
         return $data;
     }
@@ -51,7 +52,7 @@ class StudioModel extends BaseModel{
      * @return array A list of studios containing the matches found
      */
     public function getWhereLikeLocation($location){
-        $sql = "SELECT * FROM studios WHERE location LIKE :location";
+        $sql = "SELECT * FROM gamestudio WHERE location LIKE :location";
         $data = $this->run($sql, ["location" => $location . "%"])->fetchAll();
         return $data;
     }
