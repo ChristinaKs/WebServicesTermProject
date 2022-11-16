@@ -40,3 +40,37 @@ function handleGetAllStudios(Request $request, Response $response, array $args){
     $response->getBody()->write($response_data);
     return $response->withStatus($response_code);
 }
+
+// Callback for HTTP GET /studios/{studio_id}
+function handleGetStudioById(Request $request, Response $response, array $args){
+    $studio_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $studio_model = new StudioModel();
+
+    // Retrieve the query string parameter from the request's URI.
+    $studio_id = $args['studio_id'];
+    if (isset($studio_id)) {
+        // Fetch the info about the specified studio.
+        $studio_info = $studio_model->getStudioById($studio_id);
+        if (!$studio_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+    // Handle serve-side content negotiation and produce the requested representation.    
+    $requested_format = $request->getHeader('Accept');
+
+    //-- Verify the requested resource representation.    
+    if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+        $response_data = json_encode($studio_info, JSON_INVALID_UTF8_SUBSTITUTE);
+    } else {
+        $response_data = json_encode(getErrorUnsupportedFormat());
+        $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}

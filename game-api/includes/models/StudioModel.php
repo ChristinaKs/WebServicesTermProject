@@ -1,7 +1,7 @@
 <?php
 
 class StudioModel extends BaseModel{
-    
+
     private $table_name = "gamestudio";
 
     /**
@@ -54,6 +54,17 @@ class StudioModel extends BaseModel{
     public function getWhereLikeLocation($location){
         $sql = "SELECT * FROM gamestudio WHERE location LIKE :location";
         $data = $this->run($sql, ["location" => $location . "%"])->fetchAll();
+        return $data;
+    }
+
+    /**
+     * Get a single studio by its ID
+     * @param int $studio_id
+     * @return array of information related to the studio
+     */
+    public function getStudioById($studio_id){
+        $sql = "SELECT * FROM gamestudio WHERE GameStudioId = ?";
+        $data = $this->run($sql, [$studio_id])->fetch();
         return $data;
     }
 }
