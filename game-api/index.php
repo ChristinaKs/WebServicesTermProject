@@ -35,6 +35,8 @@ $app->get("/users/{user_id}", "handleGetUserById");
 $app->delete("/users/{user_id}", "handleDeleteUser");
 $app->put("/users/{user_id}", "handleUpdateUser");
 
+$app->get("/users/{user_id}/gts", "handleGetGtsByUserId");
+
 $app->get("/studios/{studio_id}", "handleGetStudioById");
 $app->delete("/studios/{studio_id}", "handleDeleteStudio");
 

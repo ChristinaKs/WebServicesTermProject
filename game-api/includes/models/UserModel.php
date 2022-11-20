@@ -19,6 +19,13 @@ class UserModel extends BaseModel {
         $data = $this->run($sql, [$user_id])->fetch();
         return $data;
     }
+
+    public function getGtsByUserId($user_id) {
+        $sql = "SELECT * FROM gtsitem WHERE UserId = ?";
+        $data = $this->run($sql, [$user_id])->fetch();
+        return $data;
+    }
+
         /**
      * Create a new user.
      * @param string $name the name of the artist.

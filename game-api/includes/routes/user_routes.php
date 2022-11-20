@@ -128,7 +128,7 @@ function handleCreateUser(Request $request, Response $response, array $args) {
 
 function handleUpdateUser(Request $request, Response $response, array $args) {
     $response_code = HTTP_OK;
-    user_model = new UserModel();
+    $user_model = new UserModel();
 
     $data = $request->getParsedBody();
 
@@ -161,4 +161,35 @@ function handleUpdateUser(Request $request, Response $response, array $args) {
 
     $response->getBody()->write($user_name);
     return $response;
+}
+
+function handleGetGtsByUserId(Request $request, Response $response, array $args){
+    $user_gts_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args['user_id'];
+    if (isset($user_id)) {
+        $user_gts_info = $user_model->getGtsByUserId($user_id);
+        if (!$user_gts_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+        // Handle serve-side content negotiation and produce the requested representation.
+        $requested_format = $request->getHeader('Accept');
+
+        //-- Verify the requested resource representation.    
+        if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+            $response_data = json_encode($user_gts_info, JSON_INVALID_UTF8_SUBSTITUTE);
+        } else {
+            $response_data = json_encode(getErrorUnsupportedFormat());
+            $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+        }
+        $response->getBody()->write($response_data);
+        return $response->withStatus($response_code);
 }
