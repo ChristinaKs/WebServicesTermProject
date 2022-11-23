@@ -163,6 +163,7 @@ function handleUpdateUser(Request $request, Response $response, array $args) {
     return $response;
 }
 
+//GTS
 function handleGetGtsByUserId(Request $request, Response $response, array $args){
     $user_gts_info = array();
     $response_data = array();
@@ -174,7 +175,7 @@ function handleGetGtsByUserId(Request $request, Response $response, array $args)
         $user_gts_info = $user_model->getGtsByUserId($user_id);
         if (!$user_gts_info) {
             // No matches found?
-            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified gts item.");
             $response->getBody()->write($response_data);
             return $response->withStatus(HTTP_NOT_FOUND);
         }
@@ -192,4 +193,173 @@ function handleGetGtsByUserId(Request $request, Response $response, array $args)
         }
         $response->getBody()->write($response_data);
         return $response->withStatus($response_code);
+}
+
+function handleCreateGtsByUserId(Request $request, Response $response, array $args){
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $data = $request->getParsedBody();
+
+    //-- Go over the elements stored in the $data array and verify that they are valid.
+    $gts_id = "";
+    $owned_id = "";
+    $user_id = "";
+
+    for ($i = 0; $i < count($data); $i++) {
+        $single_gts = $data[$i];
+
+        $gts_id = $single_gts["GtsId"];
+        $owned_id = $single_gts["OwnedId"];
+        $user_id = $single_gts["UserId"];
+
+        $new_gts = array(
+            "GtsId" => $gts_id,
+            "OwnedId" => $owned_id,
+            "UserId" => $user_id,
+        );
+
+        $user_model->createGtsByUserId($new_gts);
+    }
+    
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("gtsAdded", "The gts item was created successfully");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error creating the gts item.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}
+
+function handleGetGtsAndUserById(Request $request, Response $response, array $args){
+    $user_gts_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args['user_id'];
+    $gts_id = $args['gts_id'];
+    if (isset($user_id, $gts_id)) {
+        $user_gts_info = $user_model->getGtsAndUserById($user_id, $gts_id);
+        if (!$user_gts_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified gts item.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+        // Handle serve-side content negotiation and produce the requested representation.
+        $requested_format = $request->getHeader('Accept');
+
+        //-- Verify the requested resource representation.    
+        if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+            $response_data = json_encode($user_gts_info, JSON_INVALID_UTF8_SUBSTITUTE);
+        } else {
+            $response_data = json_encode(getErrorUnsupportedFormat());
+            $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+        }
+        $response->getBody()->write($response_data);
+        return $response->withStatus($response_code);
+}
+
+function handleDeleteGtsAndUserById(Request $request, Response $response, array $args){
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args["user_id"];
+    $gts_id = $args['gts_id'];
+    if (isset($user_id, $gts_id)) {
+
+        $user_model->deleteGtsAndUserById($user_id, $gts_id);
+        $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified gts item was deleted successfully.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else{
+        $response_data = makeCustomJSONError("badRequest", "No gts id or user id was provided.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}
+
+//Request
+function handleGetRequestByUserId(Request $request, Response $response, array $args){
+    $user_gts_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args['user_id'];
+    if (isset($user_id)) {
+        $user_requests_info = $user_model->getRequestByUserId($user_id);
+        if (!$user_requests_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+        // Handle serve-side content negotiation and produce the requested representation.
+        $requested_format = $request->getHeader('Accept');
+
+        //-- Verify the requested resource representation.    
+        if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+            $response_data = json_encode($user_requests_info, JSON_INVALID_UTF8_SUBSTITUTE);
+        } else {
+            $response_data = json_encode(getErrorUnsupportedFormat());
+            $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+        }
+        $response->getBody()->write($response_data);
+        return $response->withStatus($response_code);
+}
+
+function handleCreateRequestByUserId(Request $request, Response $response, array $args){
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $data = $request->getParsedBody();
+
+    //-- Go over the elements stored in the $data array and verify that they are valid.
+    $request_id = "";
+    $gts_id = "";
+    $user_id = "";
+    $accept_or_denied = "";
+
+    for ($i = 0; $i < count($data); $i++) {
+        $single_request = $data[$i];
+
+        $request_id = $single_request["RequestId"];
+        $gts_id = $single_request["GtsId"];
+        $user_id = $single_request["UserId"];
+        $accept_or_denied = $single_request["AcceptedOrDenied"];
+
+        $new_request = array(
+            "RequestId" => $request_id,
+            "GtsId" => $gts_id,
+            "UserId" => $user_id,
+            "AcceptedOrDenied" => $accept_or_denied
+        );
+
+        $user_model->createRequestByUserId($new_request);
+    }
+    
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("requestAdded", "The request was created successfully");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error creating the request.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
 }

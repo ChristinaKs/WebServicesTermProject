@@ -20,12 +20,6 @@ class UserModel extends BaseModel {
         return $data;
     }
 
-    public function getGtsByUserId($user_id) {
-        $sql = "SELECT * FROM gtsitem WHERE UserId = ?";
-        $data = $this->run($sql, [$user_id])->fetch();
-        return $data;
-    }
-
         /**
      * Create a new user.
      * @param string $name the name of the artist.
@@ -53,6 +47,42 @@ class UserModel extends BaseModel {
     public function deleteUser($user_id) {
         $sql = "DELETE FROM user WHERE UserId = ?";
         $data = $this->run($sql, [$user_id]);
+        return $data;
+    }
+
+    //GTS
+    public function createGtsByUserId($data) {
+        $data = $this->insert("gtsitem", $data);
+        return $data;
+    }
+
+    public function getGtsByUserId($user_id) {
+        $sql = "SELECT * FROM gtsitem WHERE UserId = ?";
+        $data = $this->run($sql, [$user_id])->fetch();
+        return $data;
+    }
+
+    public function getGtsAndUserById($user_id, $gts_id) {
+        $sql = "SELECT * FROM gtsitem WHERE UserId = ? AND GtsId = ?";
+        $data = $this->run($sql, [$user_id, $gts_id])->fetch();
+        return $data;
+    }
+
+    public function deleteGtsAndUserById($user_id, $gts_id) {
+        $sql = "DELETE FROM gtsitem WHERE UserId = ? AND GtsId = ?";
+        $data = $this->run($sql, [$user_id, $gts_id]);
+        return $data;
+    }
+
+    //request
+    public function getRequestByUserId($user_id) {
+        $sql = "SELECT * FROM traderequest WHERE UserId = ?";
+        $data = $this->run($sql, [$user_id])->fetch();
+        return $data;
+    }
+
+    public function createRequestByUserId($data) {
+        $data = $this->insert("traderequest", $data);
         return $data;
     }
 }
