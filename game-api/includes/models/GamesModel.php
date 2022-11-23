@@ -46,6 +46,12 @@ class GamesModel extends BaseModel{
         return $data;
     }
 
+    public function updateGameOwnedBoxart($game){
+        $sql = "UPDATE $table_name SET Boxart = ?, WHERE GameId = ?";
+        $data = $this->run($sql, [$game->Boxart, $game->GameId])->fetch();
+        return $data;
+    }
+
     /**
      * Gets a game's reviews by its ID
      * @param int $gameId
@@ -75,14 +81,19 @@ class GamesModel extends BaseModel{
      * @return array of information related to the game
      */
     public function createGame($game){
-        $sql = "INSERT INTO $table_name (Title, Description, ReleaseDate, Developer, Publisher, Genre, Platform, Boxart) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $data = $this->run($sql, [$game->Title, $game->Description, $game->ReleaseDate, $game->Developer, $game->Publisher, $game->Genre, $game->Platform, $game->Boxart]);
+        $sql = "INSERT INTO $table_name (GameName, GameProductCode, Boxart, GameDescrption, MPAARating, Platform, GameStudioId) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $data = $this->run($sql, [$game->GameName, $game->GameProductCode, $game->Boxart, $game->GameDescription, $game->MPAARating, $game->Platform, $game->GameStudioId])->fetch();
         return $data;
     }
 
+    /**
+     * Updates a game in the database
+     * @param object $game
+     * @return array of information related to the game
+     */
     public function updateGame($game){
-        $sql = "UPDATE $table_name SET Title = ?, Description = ?, ReleaseDate = ?, Developer = ?, Publisher = ?, Genre = ?, Platform = ?, Boxart = ? WHERE GameId = ?";
-        $data = $this->run($sql, [$game->Title, $game->Description, $game->ReleaseDate, $game->Developer, $game->Publisher, $game->Genre, $game->Platform, $game->Boxart, $game->GameId]);
+        $sql = "UPDATE $table_name SET GameName = ?, GameProductCode = ?, Boxart = ?, GameDescription = ?, MPAARating = ?, Platform = ?, GameStudioId = ? WHERE GameId = ?";
+        $data = $this->run($sql, [$game->GameName, $game->GameProductCode, $game->Boxart, $game->GameDescription, $game->MPAARating, $game->Platform, $game->GameStudioId, $game->GameId])->fetch();
         return $data;
     }
 
@@ -95,6 +106,22 @@ class GamesModel extends BaseModel{
     public function createReview($gameId, $review){
         $sql = "INSERT INTO review (GameId, Reviewer, Rating, Review) VALUES (?, ?, ?, ?)";
         $data = $this->run($sql, [$gameId, $review->Reviewer, $review->Rating, $review->Review]);
+        return $data;
+    }
+
+    public function updateReview($gameId, $reviewId, $review){
+        $sql = "UPDATE review SET GameId = ?, Reviewer = ?, Rating = ?, Review = ? WHERE ReviewId = ?";
+        $data = $this->run($sql, [$gameId, $review->Reviewer, $review->Rating, $review->Review, $reviewId]);
+        return $data;
+    }
+
+    /**
+     * Retrieve all games from the `game` table from a specified studio.
+     * @return array A list of games. 
+     */
+    function getGamesByStudioId($studio_id) {
+        $sql = "SELECT * FROM game WHERE GameStudioId = ?";
+        $data = $this->run($sql, [$studio_id])->fetchAll();
         return $data;
     }
 }

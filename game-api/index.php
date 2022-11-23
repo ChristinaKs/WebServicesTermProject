@@ -20,6 +20,7 @@ $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 $app->setBasePath("/game-api");
 
 //-- Step 4) Include the files containing the definitions of the callbacks.
+require_once './includes/routes/games_routes.php';
 require_once './includes/routes/studio_routes.php';
 require_once './includes/routes/user_routes.php';
 
@@ -41,6 +42,20 @@ $app->get("/studios/{studio_id}", "handleGetStudioById");
 $app->delete("/studios/{studio_id}", "handleDeleteStudio");
 
 $app->get("/studios/{studio_id}/games", "handleGetGamesByStudioId");
+
+//game routes
+$app->get("/games", "handleGetAllGames");
+$app->post("/games", "handleCreateGame");
+
+$app->get("/games/{game_id}", "handleGetGameById");
+$app->delete("/games/{game_id}", "handleDeleteGame");
+$app->put("/games/{game_id}", "handleUpdateGame");
+
+$app->get("/games/{game_id}/boxart", "handleGetGameBoxartById");
+$app->put("/games/{game_id}/boxart", "handleUpdateGameBoxart");
+
+$app->get("/games/{game_id}/reviews", "handleGetGameReviews");
+$app->get("/games/{game_id}/reviews/{review_id}", "handleGetGameReviewById");
 
 // Run the app.
 $app->run();
