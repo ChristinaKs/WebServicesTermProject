@@ -233,11 +233,71 @@ function handleGetGameReviewById(Request $request, Response $response, array $ar
 }
 
 function handleCreateGameReview(Request $request, Response $response, array $args){
-    //TODO
+    $response_code = HTTP_OK;
+    $game_model = new GamesModel();
+
+    $data = $request->getParsedBody();
+
+    //(GameId, PosOrNeg, RatingId, Review)
+    $GameId = "";
+    $PosOrNeg = "";
+    $RatingId = "";
+    $Review = "";
+
+    for ($i = 0; $i < count($data); $i++) {
+        $single_rev = $data[$i];
+
+        $GameId = $single_rev['GameId'];
+        $PosOrNeg = $single_rev['PosOrNeg'];
+        $RatingId = $single_rev['RatingId'];
+        $Review = $single_rev['Review'];
+
+        $new_rev = array(
+            "GameId" => $GameId,
+            "PosOrNeg" => $PosOrNeg,
+            "RatingId" => $RatingId,
+            "Review" => $Review,
+        );
+
+        $game_model->createReview($new_rev);
+    }
+
+    $response->getBody()->write($GameId);
+    return $response;
 }
 
 function handleUpdateGameReview(Request $request, Response $response, array $args){
-    //TODO
+    $response_code = HTTP_OK;
+    $game_model = new GamesModel();
+
+    $data = $request->getParsedBody();
+
+    //(GameId, PosOrNeg, RatingId, Review)
+    $GameId = "";
+    $PosOrNeg = "";
+    $RatingId = "";
+    $Review = "";
+
+    for ($i = 0; $i < count($data); $i++) {
+        $single_rev = $data[$i];
+
+        $ReviewId = $single_rev['ReviewId'];
+        $GameId = $single_rev['GameId'];
+        $PosOrNeg = $single_rev['PosOrNeg'];
+        $RatingId = $single_rev['RatingId'];
+        $Review = $single_rev['Review'];
+
+        $new_rev = array(
+            "PosOrNeg" => $PosOrNeg,
+            "RatingId" => $RatingId,
+            "Review" => $Review,
+        );
+
+        $game_model->updateReview($GameId, $ReviewId, $new_rev);
+    }
+
+    $response->getBody()->write($GameId);
+    return $response;
 }
 
 

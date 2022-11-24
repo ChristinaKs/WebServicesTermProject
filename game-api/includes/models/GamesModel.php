@@ -103,15 +103,15 @@ class GamesModel extends BaseModel{
         return $data;
     }
 
-    public function createReview($gameId, $review){
-        $sql = "INSERT INTO review (GameId, Reviewer, Rating, Review) VALUES (?, ?, ?, ?)";
-        $data = $this->run($sql, [$gameId, $review->Reviewer, $review->Rating, $review->Review]);
+    public function createReview($review){
+        $sql = "INSERT INTO review (GameId, PosOrNeg, RatingId, Review) VALUES (?, ?, ?, ?)";
+        $data = $this->run($sql, [$gameId, $review->PosOrNeg, $review->RatingId, $review->Review]);
         return $data;
     }
 
     public function updateReview($gameId, $reviewId, $review){
-        $sql = "UPDATE review SET GameId = ?, Reviewer = ?, Rating = ?, Review = ? WHERE ReviewId = ?";
-        $data = $this->run($sql, [$gameId, $review->Reviewer, $review->Rating, $review->Review, $reviewId]);
+        $sql = "UPDATE review SET GameId = ?, PosOrNeg = ?, RatingId = ?, Review = ? WHERE ReviewId = ? AND GameId = ?";
+        $data = $this->run($sql, [$review->PosOrNeg, $review->RatingId, $review->Review, $reviewId, $gameId]);
         return $data;
     }
 
