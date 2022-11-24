@@ -22,6 +22,8 @@ $app->setBasePath("/game-api");
 //-- Step 4) Include the files containing the definitions of the callbacks.
 require_once './includes/routes/studio_routes.php';
 require_once './includes/routes/user_routes.php';
+require_once './includes/routes/wishlist_routes.php';
+require_once './includes/routes/properties_routes.php';
 
 //-- Step 5) define app routes
 $app->get("/studios", "handleGetAllStudios");
@@ -34,6 +36,21 @@ $app->post("/users", "handleCreateUser");
 $app->get("/users/{user_id}", "handleGetUserById");
 $app->delete("/users/{user_id}", "handleDeleteUser");
 $app->put("/users/{user_id}", "handleUpdateUser");
+
+
+$app->get("/properties", "handleGetAllProperties");
+$app->post("/properties", "handleCreateProperty");
+
+$app->get("/properties/{owned_id}", "handleGetPropertiesById");
+$app->delete("/properties/{owned_id}", "handleDeleteProperty");
+$app->put("/properties/{owned_id}", "handleUpdateProperty");
+
+$app->get("/wishlists", "handleGetAllWishlistItems");
+$app->post("/wishlists", "handleCreateWishlistItem");
+
+$app->get("/wishlists/{wishlist_id}", "handleGetWishlistById");
+$app->delete("/wishlists/{wishlist_id}", "handleDeleteWishlistItem");
+$app->put("/wishlists/{wishlist_id}", "handleUpdateWishlist");
 
 $app->get("/users/{user_id}/gts", "handleGetGtsByUserId");
 

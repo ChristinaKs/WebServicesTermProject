@@ -39,7 +39,7 @@ function handleDeleteUser(Request $request, Response $response, array $args) {
     if (isset($user_id)) {
 
         $user_model->deleteUser($user_id);
-        $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified user was deleted Successfully.");
+        $response_data = makeCustomJSONsuccess("userDeleted", "The specified user was deleted Successfully.");
         $response->getBody()->write($response_data);
         return $response->withStatus(HTTP_OK);
     } else{
@@ -121,9 +121,17 @@ function handleCreateUser(Request $request, Response $response, array $args) {
 
         $user_model->createUser($new_user);
     }
-
-    $response->getBody()->write($user_name);
-    return $response;
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("userAdded", "The specified user was Successfully created.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error creating the user.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
 }
 
 function handleUpdateUser(Request $request, Response $response, array $args) {
@@ -152,15 +160,28 @@ function handleUpdateUser(Request $request, Response $response, array $args) {
         $user_lname = $existing_user["LastName"];
         $user_cont = $existing_user["ContactInfo"];
 
-        $existing_artist = array(
-            "Username" => $user_name
+        $existing_user = array(
+            "Email" => $user_email,
+            "Username" => $user_name,
+            "Password" => $user_pass,
+            "FirstName" => $user_fname,
+            "LastName" => $user_lname,
+            "ContactInfo" => $user_cont
         );
 
         $user_model->updateUser($existing_user, array("UserId" => $user_id));
     }
-
-    $response->getBody()->write($user_name);
-    return $response;
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("userUpdated", "The specified user was Successfully edited.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error editing the user.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
 }
 
 function handleGetGtsByUserId(Request $request, Response $response, array $args){
