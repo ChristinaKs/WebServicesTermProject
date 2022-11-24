@@ -267,7 +267,7 @@ function handleGetGtsAndUserById(Request $request, Response $response, array $ar
         return $response->withStatus($response_code);
 }
 
-function handleDeleteGtsAndUserById(Request $request, Response $response, array $args){
+function handleDeleteGtsById(Request $request, Response $response, array $args){
     $response_data = array();
     $response_code = HTTP_OK;
     $user_model = new UserModel();
@@ -276,7 +276,7 @@ function handleDeleteGtsAndUserById(Request $request, Response $response, array 
     $gts_id = $args['gts_id'];
     if (isset($user_id, $gts_id)) {
 
-        $user_model->deleteGtsAndUserById($user_id, $gts_id);
+        $user_model->deleteGtsById($user_id, $gts_id);
         $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified gts item was deleted successfully.");
         $response->getBody()->write($response_data);
         return $response->withStatus(HTTP_OK);
@@ -359,6 +359,200 @@ function handleCreateRequestByUserId(Request $request, Response $response, array
         $response_data = makeCustomJSONError("badRequest", "There was an error creating the request.");
         $response->getBody()->write($response_data);
         return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}
+
+function handleGetRequestAndUserById(Request $request, Response $response, array $args){
+    $user_gts_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args['user_id'];
+    $request_id = $args['request_id'];
+    if (isset($user_id, $request_id)) {
+        $user_requests_info = $user_model->getRequestAndUserById($user_id, $request_id);
+        if (!$user_requests_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user or request.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+        // Handle serve-side content negotiation and produce the requested representation.
+        $requested_format = $request->getHeader('Accept');
+
+        //-- Verify the requested resource representation.    
+        if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+            $response_data = json_encode($user_requests_info, JSON_INVALID_UTF8_SUBSTITUTE);
+        } else {
+            $response_data = json_encode(getErrorUnsupportedFormat());
+            $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+        }
+        $response->getBody()->write($response_data);
+        return $response->withStatus($response_code);
+}
+
+function handleDeleteRequestById(Request $request, Response $response, array $args){
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args["user_id"];
+    $request_id = $args['request_id'];
+    if (isset($user_id, $request_id)) {
+        $user_requests_info = $user_model->getRequestAndUserById($user_id, $request_id);
+        if (!$user_requests_info) {
+            //no matches found
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified request.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+        else{
+            $user_model->deleteRequestById($user_id, $request_id);
+            $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified request was deleted successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}
+
+//Review
+function handleGetReviewByUserId(Request $request, Response $response, array $args){
+    $user_gts_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args['user_id'];
+    if (isset($user_id)) {
+        $user_review_info = $user_model->getReviewsByUserId($user_id);
+        if (!$user_review_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+        // Handle serve-side content negotiation and produce the requested representation.
+        $requested_format = $request->getHeader('Accept');
+
+        //-- Verify the requested resource representation.    
+        if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+            $response_data = json_encode($user_review_info, JSON_INVALID_UTF8_SUBSTITUTE);
+        } else {
+            $response_data = json_encode(getErrorUnsupportedFormat());
+            $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+        }
+        $response->getBody()->write($response_data);
+        return $response->withStatus($response_code);
+}
+
+function handleCreateReviewByUserId(Request $request, Response $response, array $args){
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $data = $request->getParsedBody();
+
+    //-- Go over the elements stored in the $data array and verify that they are valid.
+    $review_id = "";
+    $rating_id = "";
+    $user_id = "";
+    $pos_or_neg = "";
+    $review_message = "";
+
+    for ($i = 0; $i < count($data); $i++) {
+        $single_review = $data[$i];
+
+        $review_id = $single_review["ReviewId"];
+        $rating_id = $single_review["RatingId"];
+        $user_id = $single_review["UserId"];
+        $pos_or_neg = $single_review["PosOrNeg"];
+        $review_message = $single_review["Review"];
+
+        $new_review = array(
+            "ReviewId" => $review_id,
+            "RatingId" => $rating_id,
+            "UserId" => $user_id,
+            "PosOrNeg" => $pos_or_neg,
+            "Review" => $review_message
+        );
+
+        $user_model->createReviewByUserId($new_review);
+    }
+    
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("requestAdded", "The request was created successfully");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error creating the request.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}
+
+function handleGetReviewAndUserById(Request $request, Response $response, array $args){
+    $user_gts_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args['user_id'];
+    $review_id = $args['review_id'];
+    if (isset($user_id, $review_id)) {
+        $user_review_info = $user_model->getReviewAndUserById($user_id, $review_id);
+        if (!$user_review_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user or review.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+        // Handle serve-side content negotiation and produce the requested representation.
+        $requested_format = $request->getHeader('Accept');
+
+        //-- Verify the requested resource representation.    
+        if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+            $response_data = json_encode($user_review_info, JSON_INVALID_UTF8_SUBSTITUTE);
+        } else {
+            $response_data = json_encode(getErrorUnsupportedFormat());
+            $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+        }
+        $response->getBody()->write($response_data);
+        return $response->withStatus($response_code);
+}
+
+function handleDeleteReviewById(Request $request, Response $response, array $args){
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $user_model = new UserModel();
+
+    $user_id = $args["user_id"];
+    $review_id = $args['review_id'];
+    if (isset($user_id, $review_id)) {
+        $user_review_info = $user_model->getReviewAndUserById($user_id, $review_id);
+        if (!$user_review_info) {
+            //no matches found
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified review.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+        else{
+            $user_model->deleteReviewById($user_id, $review_id);
+            $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified review was deleted successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
     }
     $response->getBody()->write($response_data);
     return $response->withStatus($response_code);

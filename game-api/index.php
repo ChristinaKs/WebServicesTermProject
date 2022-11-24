@@ -38,10 +38,17 @@ $app->put("/users/{user_id}", "handleUpdateUser");
 $app->get("/users/{user_id}/gts", "handleGetGtsByUserId");
 $app->post("/users/{user_id}/gts", "handleCreateGtsByUserId");
 $app->get("/users/{user_id}/gts/{gts_id}", "handleGetGtsAndUserById");
-$app->delete("/users/{user_id}/gts/{gts_id}", "handleDeleteGtsAndUserById");
+$app->delete("/users/{user_id}/gts/{gts_id}", "handleDeleteGtsById");
 
 $app->get("/users/{user_id}/requests", "handleGetRequestByUserId");
 $app->post("/users/{user_id}/requests", "handleCreateRequestByUserId");
+$app->get("/users/{user_id}/requests/{request_id}", "handleGetRequestAndUserById");
+$app->delete("/users/{user_id}/requests/{request_id}", "handleDeleteRequestById");
+
+$app->get("/users/{user_id}/reviews", "handleGetReviewByUserId");
+$app->post("/users/{user_id}/reviews", "handleCreateReviewByUserId");
+$app->get("/users/{user_id}/reviews/{review_id}", "handleGetReviewAndUserById");
+$app->delete("/users/{user_id}/reviews/{review_id}", "handleDeleteReviewById");
 
 $app->get("/studios/{studio_id}", "handleGetStudioById");
 $app->delete("/studios/{studio_id}", "handleDeleteStudio");

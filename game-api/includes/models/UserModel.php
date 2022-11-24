@@ -58,7 +58,7 @@ class UserModel extends BaseModel {
 
     public function getGtsByUserId($user_id) {
         $sql = "SELECT * FROM gtsitem WHERE UserId = ?";
-        $data = $this->run($sql, [$user_id])->fetch();
+        $data = $this->run($sql, [$user_id])->fetchAll();
         return $data;
     }
 
@@ -68,21 +68,57 @@ class UserModel extends BaseModel {
         return $data;
     }
 
-    public function deleteGtsAndUserById($user_id, $gts_id) {
+    public function deleteGtsById($user_id, $gts_id) {
         $sql = "DELETE FROM gtsitem WHERE UserId = ? AND GtsId = ?";
         $data = $this->run($sql, [$user_id, $gts_id]);
         return $data;
     }
 
-    //request
+    //Requests
     public function getRequestByUserId($user_id) {
         $sql = "SELECT * FROM traderequest WHERE UserId = ?";
-        $data = $this->run($sql, [$user_id])->fetch();
+        $data = $this->run($sql, [$user_id])->fetchAll();
         return $data;
     }
 
     public function createRequestByUserId($data) {
         $data = $this->insert("traderequest", $data);
+        return $data;
+    }
+
+    public function getRequestAndUserById($user_id, $request_id) {
+        $sql = "SELECT * FROM traderequest WHERE UserId = ? AND RequestId = ?";
+        $data = $this->run($sql, [$user_id, $request_id])->fetch();
+        return $data;
+    }
+
+    public function deleteRequestById($user_id, $request_id) {
+        $sql = "DELETE FROM traderequest WHERE UserId = ? AND RequestId = ?";
+        $data = $this->run($sql, [$user_id, $request_id]);
+        return $data;
+    }
+
+    //Reviews
+    public function getReviewsByUserId($user_id) {
+        $sql = "SELECT * FROM review WHERE UserId = ?";
+        $data = $this->run($sql, [$user_id])->fetchAll();
+        return $data;
+    }
+
+    public function createReviewByUserId($data) {
+        $data = $this->insert("review", $data);
+        return $data;
+    }
+
+    public function getReviewAndUserById($user_id, $review_id) {
+        $sql = "SELECT * FROM review WHERE UserId = ? AND ReviewId = ?";
+        $data = $this->run($sql, [$user_id, $review_id])->fetch();
+        return $data;
+    }
+
+    public function deleteReviewById($user_id, $review_id) {
+        $sql = "DELETE FROM review WHERE UserId = ? AND ReviewId = ?";
+        $data = $this->run($sql, [$user_id, $review_id]);
         return $data;
     }
 }
