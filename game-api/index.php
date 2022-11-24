@@ -57,5 +57,8 @@ $app->put("/games/{game_id}/boxart", "handleUpdateGameBoxart");
 $app->get("/games/{game_id}/reviews", "handleGetGameReviews");
 $app->get("/games/{game_id}/reviews/{review_id}", "handleGetGameReviewById");
 
+$app->post("/games/{game_id}/reviews", "handleCreateReview");
+$app->put("/games/{game_id}/reviews/{review_id}", "handleUpdateReview");
+
 // Run the app.
 $app->run();
