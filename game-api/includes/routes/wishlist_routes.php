@@ -37,11 +37,15 @@ function handleDeleteWishlistItem(Request $request, Response $response, array $a
 
     $wishlist_id = $args["wishlist_id"];
     if (isset($wishlist_id)) {
-
-        $wishlist_model->deleteWishlistItem($wishlist_id);
-        $response_data = makeCustomJSONsuccess("wishlistDeleted", "The specified wishlist item was deleted Successfully.");
-        $response->getBody()->write($response_data);
-        return $response->withStatus(HTTP_OK);
+        if(!$wishlist_model->getWishlistById($wishlist_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified wishlist.");
+            $response_code = HTTP_NOT_FOUND;
+        } else {
+            $wishlist_model->deleteWishlistItem($wishlist_id);
+            $response_data = makeCustomJSONsuccess("wishlistDeleted", "The specified wishlist item was deleted Successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
     } else{
         $response_data = makeCustomJSONError("badRequest", "No wishlist id was provided.");
         $response->getBody()->write($response_data);

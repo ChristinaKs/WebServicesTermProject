@@ -184,11 +184,16 @@ function handleDeleteStudio(Request $request, Response $response, array $args) {
     // Retreive the studio if from the request's URI.
     $studio_id = $args["studio_id"];
     if (isset($studio_id)) {
+        if(!$studio_model->getStudioById($studio_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
+            $response_code = HTTP_NOT_FOUND;
+        } else {
         // Delete the specified studio.
-        $studio_model->deleteStudio($studio_id);
-        $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified studio was deleted successfully.");
-        $response->getBody()->write($response_data);
-        return $response->withStatus(HTTP_OK);
+            $studio_model->deleteStudio($studio_id);
+            $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified studio was deleted successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
     } else {
         // No atist id provided.
         $response_data = makeCustomJSONError("badRequest", "No studio id was provided.");

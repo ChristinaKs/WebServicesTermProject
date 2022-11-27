@@ -146,12 +146,18 @@ function handleDeleteGame(Request $request, Response $response, array $args) {
     $games_model = new GamesModel();
 
     $game_id = $args["game_id"];
+    
     if (isset($game_id)) {
-        $games_model->deleteGame($game_id);
-        $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified game was deleted Successfully.");
-        $response->getBody()->write($response_data);
-        return $response->withStatus(HTTP_OK);
-    } else{
+        if(!$games_model->getGameById($game_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified game.");
+            $response_code = HTTP_NOT_FOUND;
+        } else {
+            $games_model->deleteGame($game_id);
+            $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified game was deleted Successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
+    } else {
         $response_data = makeCustomJSONError("badRequest", "No game id was provided.");
         $response->getBody()->write($response_data);
         return $response->withStatus(HTTP_BAD_REQUEST);
