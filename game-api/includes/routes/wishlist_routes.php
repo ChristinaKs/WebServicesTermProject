@@ -150,6 +150,11 @@ function handleUpdateWishlist(Request $request, Response $response, array $args)
         );
 
         $wishlist_model->updateWishlistItem($existing_wishlist_item, array("WishlistId" => $wishlist_id));
+        if(!$wishlist_model->getWishlistItemById($wishlist_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified wishlist.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
     if (isset($response)) {
         $response_data = makeCustomJSONsuccess("wishlistEdited", "The specified wishlist was successfully edited.");

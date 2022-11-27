@@ -120,11 +120,12 @@ function handleUpdateGame(Request $request, Response $response, array $args)
         );
 
         $games_model->updateGame($game, array("GameId" => $GameId));
-        // $games_model->updateGame($game);
+        if(!$games_model->getGameById($GameId)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified game.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
-
-    // $response->getBody()->write($GameName);
-    // return $response;
 
     if (isset($response)) {
         $response_data = makeCustomJSONsuccess("gameEdited", "The specified game was successfully edited.");
@@ -292,39 +293,39 @@ function handleGetGameReviewById(Request $request, Response $response, array $ar
 //     return $response;
 // }
 
-function handleUpdateGameReview(Request $request, Response $response, array $args){
-    $response_code = HTTP_OK;
-    $games_model = new GamesModel();
+// function handleUpdateGameReview(Request $request, Response $response, array $args){
+//     $response_code = HTTP_OK;
+//     $games_model = new GamesModel();
 
-    $data = $request->getParsedBody();
+//     $data = $request->getParsedBody();
 
-    //(GameId, PosOrNeg, RatingId, Review)
-    $GameId = "";
-    $PosOrNeg = "";
-    $RatingId = "";
-    $Review = "";
+//     //(GameId, PosOrNeg, RatingId, Review)
+//     $GameId = "";
+//     $PosOrNeg = "";
+//     $RatingId = "";
+//     $Review = "";
 
-    for ($i = 0; $i < count($data); $i++) {
-        $single_rev = $data[$i];
+//     for ($i = 0; $i < count($data); $i++) {
+//         $single_rev = $data[$i];
 
-        $ReviewId = $single_rev['ReviewId'];
-        $GameId = $single_rev['GameId'];
-        $PosOrNeg = $single_rev['PosOrNeg'];
-        $RatingId = $single_rev['RatingId'];
-        $Review = $single_rev['Review'];
+//         $ReviewId = $single_rev['ReviewId'];
+//         $GameId = $single_rev['GameId'];
+//         $PosOrNeg = $single_rev['PosOrNeg'];
+//         $RatingId = $single_rev['RatingId'];
+//         $Review = $single_rev['Review'];
 
-        $new_rev = array(
-            "PosOrNeg" => $PosOrNeg,
-            "RatingId" => $RatingId,
-            "Review" => $Review,
-        );
+//         $new_rev = array(
+//             "PosOrNeg" => $PosOrNeg,
+//             "RatingId" => $RatingId,
+//             "Review" => $Review,
+//         );
 
-        $games_model->updateReview($GameId, $ReviewId, $new_rev);
-    }
+//         $games_model->updateReview($GameId, $ReviewId, $new_rev);
+//     }
 
-    $response->getBody()->write($GameId);
-    return $response;
-}
+//     $response->getBody()->write($GameId);
+//     return $response;
+// }
 
 
 function handleGetGameBoxartById(Request $request, Response $response, array $args){

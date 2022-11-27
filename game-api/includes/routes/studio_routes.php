@@ -76,7 +76,7 @@ function handleGetStudioById(Request $request, Response $response, array $args){
     return $response->withStatus($response_code);
 }
 
-// Callback for HTTP PUT /studios
+// Callback for HTTP post /studios
 function handleCreateStudio(Request $request, Response $response, array $args) {
     $response_code = HTTP_OK;
     $studio_model = new StudioModel();
@@ -123,7 +123,7 @@ function handleCreateStudio(Request $request, Response $response, array $args) {
     return $response->withStatus($response_code);
 }
 
-// Callback for HTTP POST /studios
+// Callback for HTTP put /studios
 function handleUpdateStudio(Request $request, Response $response, array $args) {
     $response_code = HTTP_OK;
     $studio_model = new StudioModel();
@@ -155,6 +155,11 @@ function handleUpdateStudio(Request $request, Response $response, array $args) {
         );
 
         $studio_model->updateStudio($existing_studio, array("GameStudioId" => $studio_id));
+        if(!$studio_model->getStudioById($studio_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
 
     if (isset($response)) {

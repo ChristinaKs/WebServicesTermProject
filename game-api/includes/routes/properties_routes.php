@@ -166,6 +166,11 @@ function handleUpdateProperty(Request $request, Response $response, array $args)
         );
 
         $prop_model->updateProperty($existing_property, array("OwnedId" => $owned_id));
+        if(!$prop_model->getPropertiesById($owned_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified property.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
 
     if (isset($response)) {

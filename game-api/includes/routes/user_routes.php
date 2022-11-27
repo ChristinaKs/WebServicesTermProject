@@ -170,6 +170,11 @@ function handleUpdateUser(Request $request, Response $response, array $args) {
         );
 
         $user_model->updateUser($existing_user, array("UserId" => $user_id));
+        if(!$user_model->getUserById($user_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
     if (isset($response)) {
         $response_data = makeCustomJSONsuccess("userUpdated", "The specified user was Successfully edited.");
