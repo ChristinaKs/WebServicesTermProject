@@ -2,7 +2,7 @@
 
 class GamesModel extends BaseModel{
 
-    private $table_name = "game";
+    // private game = "game";
 
     /**
      * A model class for the 'studios' database table.
@@ -19,7 +19,7 @@ class GamesModel extends BaseModel{
      * @return array A list of games
      */
     public function getAllGames(){
-        $sql = "SELECT * FROM $table_name";
+        $sql = "SELECT * FROM game";
         $data = $this->rows($sql);
         return $data;
     }
@@ -30,7 +30,7 @@ class GamesModel extends BaseModel{
      * @return array of information related to the game
      */
     public function getGameById($gameId){
-        $sql = "SELECT * FROM $table_name WHERE GameId = ?";
+        $sql = "SELECT * FROM game WHERE GameId = ?";
         $data = $this->run($sql, [$gameId])->fetch();
         return $data;
     }
@@ -46,11 +46,22 @@ class GamesModel extends BaseModel{
         return $data;
     }
 
-    public function updateGameOwnedBoxart($game){
-        $sql = "UPDATE $table_name SET Boxart = ?, WHERE GameId = ?";
-        $data = $this->run($sql, [$game->Boxart, $game->GameId])->fetch();
-        return $data;
-    }
+    
+    // /**
+    //  * updates a game's boxart by its ID
+    //  * @param int $gameId
+    //  * @return array of information related to the game's boxart
+    //  */
+    // // public function updateGameOwnedBoxart($game){
+    // //     $sql = "UPDATE game SET Boxart = ?, WHERE GameId = ?";
+    // //     $data = $this->run($sql, [$game->Boxart, $game->GameId])->fetch();
+    // //     return $data;
+    // // }
+    // public function updateGameOwnedBoxart($gameId, $boxart){
+    //     $sql = "UPDATE game SET Boxart = ? WHERE GameId = ?";
+    //     $data = $this->run($sql, [$boxart, $gameId])->fetch();
+    //     return $data;
+    // }
 
     /**
      * Gets a game's reviews by its ID
@@ -80,9 +91,8 @@ class GamesModel extends BaseModel{
      * @param object $game
      * @return array of information related to the game
      */
-    public function createGame($game){
-        $sql = "INSERT INTO $table_name (GameName, GameProductCode, Boxart, GameDescrption, MPAARating, Platform, GameStudioId) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $data = $this->run($sql, [$game->GameName, $game->GameProductCode, $game->Boxart, $game->GameDescription, $game->MPAARating, $game->Platform, $game->GameStudioId])->fetch();
+    public function createGame($data) {
+        $data = $this->insert("game", $data);
         return $data;
     }
 
@@ -91,23 +101,26 @@ class GamesModel extends BaseModel{
      * @param object $game
      * @return array of information related to the game
      */
-    public function updateGame($game){
-        $sql = "UPDATE $table_name SET GameName = ?, GameProductCode = ?, Boxart = ?, GameDescription = ?, MPAARating = ?, Platform = ?, GameStudioId = ? WHERE GameId = ?";
-        $data = $this->run($sql, [$game->GameName, $game->GameProductCode, $game->Boxart, $game->GameDescription, $game->MPAARating, $game->Platform, $game->GameStudioId, $game->GameId])->fetch();
+    public function updateGame($data, $where) {
+        $data = $this->update("game", $data, $where);
         return $data;
     }
 
     public function deleteGame($gameId){
-        $sql = "DELETE FROM $table_name WHERE GameId = ?";
+        $sql = "DELETE FROM game WHERE GameId = ?";
         $data = $this->run($sql, [$gameId]);
         return $data;
     }
 
-    public function createReview($review){
-        $sql = "INSERT INTO review (GameId, PosOrNeg, RatingId, Review) VALUES (?, ?, ?, ?)";
-        $data = $this->run($sql, [$gameId, $review->PosOrNeg, $review->RatingId, $review->Review]);
-        return $data;
-    }
+    // public function createReview($review){
+    //     $sql = "INSERT INTO review (GameId, PosOrNeg, RatingId, Review) VALUES (?, ?, ?, ?)";
+    //     $data = $this->run($sql, [$gameId, $review->PosOrNeg, $review->RatingId, $review->Review]);
+    //     return $data;
+    // }
+    // public function createReview($data) {
+    //     $data = $this->insert("game", $data);
+    //     return $data;
+    // }
 
     public function updateReview($gameId, $reviewId, $review){
         $sql = "UPDATE review SET GameId = ?, PosOrNeg = ?, RatingId = ?, Review = ? WHERE ReviewId = ? AND GameId = ?";
