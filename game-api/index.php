@@ -77,12 +77,12 @@ $app->delete("/games/{game_id}", "handleDeleteGame");
 $app->put("/games/{game_id}", "handleUpdateGame");
 
 $app->get("/games/{game_id}/boxart", "handleGetGameBoxartById");
-// $app->put("/games/{game_id}/boxart", "handleUpdateGameBoxart");
+// $app->put("/games/{game_id}/boxart", "handleUpdateGameBoxart"); // Does not work
 
 $app->get("/games/{game_id}/reviews", "handleGetGameReviews");
-// $app->post("/games/{game_id}/reviews", "handleCreateGameReview");
+// $app->post("/games/{game_id}/reviews", "handleCreateGameReview"); // Does not work
 
-// $app->put("/games/{game_id}/reviews/{review_id}", "handleUpdateReview");
+// $app->put("/games/{game_id}/reviews/{review_id}", "handleUpdateReview"); // Does not work
 $app->get("/games/{game_id}/reviews/{review_id}", "handleGetGameReviewById");
 
 

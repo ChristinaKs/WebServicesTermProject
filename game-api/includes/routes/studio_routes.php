@@ -6,11 +6,11 @@ use Slim\Factory\AppFactory;
 
 require_once __DIR__ . './../models/BaseModel.php';
 require_once __DIR__ . './../models/StudioModel.php';
-require_once __DIR__ . './../models/GamesModel.php';
+require_once __DIR__ . './../models/GameModel.php';
 
 // Callback for HTTP GET /studios
 //-- Supported filtering operation: By developer, by pubisher and by location
-function handleGetAllStudios(Request $request, Response $response, array $args){
+function handleGetAllStudios(Request $request, Response $response, array $args) {
     $studios = array();
     $response_data = array();
     $response_code = HTTP_OK;
@@ -18,11 +18,11 @@ function handleGetAllStudios(Request $request, Response $response, array $args){
 
     // Retrieve the query string parameter from the request's URI.
     $filter_params = $request->getQueryParams();
-    if(isset($filter_params['developer'])){
+    if (isset($filter_params['developer'])) {
         $studios = $studio_model->getWhereLikeDeveloper($filter_params['developer']);
-    } elseif (isset($filter_params['publisher'])){
+    } elseif (isset($filter_params['publisher'])) {
         $studios = $studio_model->getWhereLikePublisher($filter_params['publisher']);
-    } elseif (isset($filter_params['location'])){
+    } elseif (isset($filter_params['location'])) {
         $studios = $studio_model->getWhereLikeLocation($filter_params['location']);
     } else { // No filtering dectected
         $studios = $studio_model->getAllStudios();
@@ -43,7 +43,7 @@ function handleGetAllStudios(Request $request, Response $response, array $args){
 }
 
 // Callback for HTTP GET /studios/{studio_id}
-function handleGetStudioById(Request $request, Response $response, array $args){
+function handleGetStudioById(Request $request, Response $response, array $args) {
     $studio_info = array();
     $response_data = array();
     $response_code = HTTP_OK;
@@ -109,7 +109,7 @@ function handleCreateStudio(Request $request, Response $response, array $args) {
 
         $studio_model->createstudio($new_studio);
     }
-    
+
     if (isset($response)) {
         $response_data = makeCustomJSONsuccess("studioAdded", "The specified studio was Successfully created.");
         $response->getBody()->write($response_data);
@@ -155,7 +155,7 @@ function handleUpdateStudio(Request $request, Response $response, array $args) {
         );
 
         $studio_model->updateStudio($existing_studio, array("GameStudioId" => $studio_id));
-        if(!$studio_model->getStudioById($studio_id)) {
+        if (!$studio_model->getStudioById($studio_id)) {
             $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
             $response->getBody()->write($response_data);
             return $response->withStatus(HTTP_NOT_FOUND);
@@ -184,11 +184,11 @@ function handleDeleteStudio(Request $request, Response $response, array $args) {
     // Retreive the studio if from the request's URI.
     $studio_id = $args["studio_id"];
     if (isset($studio_id)) {
-        if(!$studio_model->getStudioById($studio_id)) {
+        if (!$studio_model->getStudioById($studio_id)) {
             $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
             $response_code = HTTP_NOT_FOUND;
         } else {
-        // Delete the specified studio.
+            // Delete the specified studio.
             $studio_model->deleteStudio($studio_id);
             $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified studio was deleted successfully.");
             $response->getBody()->write($response_data);
@@ -210,25 +210,25 @@ function handleGetGamesByStudioId(Request $request, Response $response, array $a
     $games = array();
     $response_data = array();
     $response_code = HTTP_OK;
-    $game_model = new GamesModel();
+    $game_model = new GameModel();
 
     // Retreive the studio if from the request's URI.
     $studio_id = $args["studio_id"];
-    
+	
     // Fetch the info about the specified games.
     $filter_params = $request->getQueryParams();
-    if (isset($studio_id)) {
-        
-        $games = $game_model->getGamesByStudioId($studio_id);
-        if(!$games){ // No matches found?
-            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
-            $response->getBody()->write($response_data);
-            return $response->withStatus(HTTP_NOT_FOUND);
-        }
+
+    $games = $game_model->getGamesFiltered($filter_params, $studio_id);
+	
+    if (!$games) { // No matches found?
+        $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_NOT_FOUND);
     }
+
     // Handle serve-side content negotiation and produce the requested representation.    
     $requested_format = $request->getHeader('Accept');
-    
+
     //-- We verify the requested resource representation.    
     if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
         $response_data = json_encode($games, JSON_INVALID_UTF8_SUBSTITUTE);
