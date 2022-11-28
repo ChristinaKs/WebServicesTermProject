@@ -76,7 +76,7 @@ function handleGetStudioById(Request $request, Response $response, array $args){
     return $response->withStatus($response_code);
 }
 
-// Callback for HTTP PUT /studios
+// Callback for HTTP post /studios
 function handleCreateStudio(Request $request, Response $response, array $args) {
     $response_code = HTTP_OK;
     $studio_model = new StudioModel();
@@ -123,7 +123,7 @@ function handleCreateStudio(Request $request, Response $response, array $args) {
     return $response->withStatus($response_code);
 }
 
-// Callback for HTTP POST /studios
+// Callback for HTTP put /studios
 function handleUpdateStudio(Request $request, Response $response, array $args) {
     $response_code = HTTP_OK;
     $studio_model = new StudioModel();
@@ -155,6 +155,11 @@ function handleUpdateStudio(Request $request, Response $response, array $args) {
         );
 
         $studio_model->updateStudio($existing_studio, array("GameStudioId" => $studio_id));
+        if(!$studio_model->getStudioById($studio_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
 
     if (isset($response)) {
@@ -179,11 +184,16 @@ function handleDeleteStudio(Request $request, Response $response, array $args) {
     // Retreive the studio if from the request's URI.
     $studio_id = $args["studio_id"];
     if (isset($studio_id)) {
+        if(!$studio_model->getStudioById($studio_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified studio.");
+            $response_code = HTTP_NOT_FOUND;
+        } else {
         // Delete the specified studio.
-        $studio_model->deleteStudio($studio_id);
-        $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified studio was deleted successfully.");
-        $response->getBody()->write($response_data);
-        return $response->withStatus(HTTP_OK);
+            $studio_model->deleteStudio($studio_id);
+            $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified studio was deleted successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
     } else {
         // No atist id provided.
         $response_data = makeCustomJSONError("badRequest", "No studio id was provided.");

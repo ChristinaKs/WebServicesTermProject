@@ -37,11 +37,15 @@ function handleDeleteProperty(Request $request, Response $response, array $args)
 
     $property_id = $args["owned_id"];
     if (isset($property_id)) {
-
-        $prop_model->deleteProperty($property_id);
-        $response_data = makeCustomJSONsuccess("propertyDeleted", "The specified property was deleted Successfully.");
-        $response->getBody()->write($response_data);
-        return $response->withStatus(HTTP_OK);
+        if(!$prop_model->getPropertiesById($property_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified property.");
+            $response_code = HTTP_NOT_FOUND;
+        } else {
+            $prop_model->deleteProperty($property_id);
+            $response_data = makeCustomJSONsuccess("propertyDeleted", "The specified property was deleted Successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
     } else{
         $response_data = makeCustomJSONError("badRequest", "No property id was provided.");
         $response->getBody()->write($response_data);
@@ -166,6 +170,11 @@ function handleUpdateProperty(Request $request, Response $response, array $args)
         );
 
         $prop_model->updateProperty($existing_property, array("OwnedId" => $owned_id));
+        if(!$prop_model->getPropertiesById($owned_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified property.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
 
     if (isset($response)) {

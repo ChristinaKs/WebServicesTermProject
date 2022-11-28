@@ -37,11 +37,15 @@ function handleDeleteUser(Request $request, Response $response, array $args) {
 
     $user_id = $args["user_id"];
     if (isset($user_id)) {
-
-        $user_model->deleteUser($user_id);
-        $response_data = makeCustomJSONsuccess("userDeleted", "The specified user was deleted Successfully.");
-        $response->getBody()->write($response_data);
-        return $response->withStatus(HTTP_OK);
+        if(!$user_model->getUserById($user_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response_code = HTTP_NOT_FOUND;
+        } else {
+            $user_model->deleteUser($user_id);
+            $response_data = makeCustomJSONsuccess("userDeleted", "The specified user was deleted Successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
     } else{
         $response_data = makeCustomJSONError("badRequest", "No user id was provided.");
         $response->getBody()->write($response_data);
@@ -170,6 +174,11 @@ function handleUpdateUser(Request $request, Response $response, array $args) {
         );
 
         $user_model->updateUser($existing_user, array("UserId" => $user_id));
+        if(!$user_model->getUserById($user_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
     if (isset($response)) {
         $response_data = makeCustomJSONsuccess("userUpdated", "The specified user was Successfully edited.");
