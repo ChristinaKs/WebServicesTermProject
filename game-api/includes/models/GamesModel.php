@@ -8,7 +8,6 @@ class GamesModel extends BaseModel{
      * A model class for the 'studios' database table.
      * It exposes methods for CRUD operations.
      */
-    
     public function __construct() {
         // Calk the parent class and initialize the database connection
        parent::__construct();
@@ -45,23 +44,6 @@ class GamesModel extends BaseModel{
         $data = $this->run($sql, [$gameId])->fetch();
         return $data;
     }
-
-    
-    // /**
-    //  * updates a game's boxart by its ID
-    //  * @param int $gameId
-    //  * @return array of information related to the game's boxart
-    //  */
-    // // public function updateGameOwnedBoxart($game){
-    // //     $sql = "UPDATE game SET Boxart = ?, WHERE GameId = ?";
-    // //     $data = $this->run($sql, [$game->Boxart, $game->GameId])->fetch();
-    // //     return $data;
-    // // }
-    // public function updateGameOwnedBoxart($gameId, $boxart){
-    //     $sql = "UPDATE game SET Boxart = ? WHERE GameId = ?";
-    //     $data = $this->run($sql, [$boxart, $gameId])->fetch();
-    //     return $data;
-    // }
 
     /**
      * Gets a game's reviews by its ID

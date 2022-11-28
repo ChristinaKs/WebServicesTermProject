@@ -364,32 +364,4 @@ function handleGetGameBoxartById(Request $request, Response $response, array $ar
     $response->getBody()->write($response_data);
     return $response->withStatus($response_code);
 }
-
-// function handleUpdateGameBoxart(Request $request, Response $response, array $args)
-// {
-//     $response_code = HTTP_OK;
-//     $games_model = new GamesModel();
-
-//     $data = $request->getParsedBody();
-
-//     $GameId = "";
-//     $Boxart = "";
-
-//     for ($i = 0; $i < count($data); $i++) {
-//         $single_game = $data[$i];
-
-//         $GameId = $single_game['GameId']; // Undefined array key "GameId"
-//         $Boxart = $single_game['Boxart'];
-
-//         $game = array(
-//             "GameId" => $GameId,
-//             "Boxart" => $Boxart,
-//         );
-
-//         $games_model->updateGameOwnedBoxart($game);
-//     }
-
-//     $response->getBody()->write($GameId);
-//     return $response;
-// }
 ?>
