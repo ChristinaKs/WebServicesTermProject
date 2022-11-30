@@ -6,6 +6,7 @@ use Slim\Factory\AppFactory;
 
 require __DIR__ . '/vendor/autoload.php';
 require_once './includes/app_constants.php';
+require_once './includes/helpers/Paginator.php';
 require_once './includes/helpers/helper_functions.php';
 
 //--Step 1) Instantiate App.
