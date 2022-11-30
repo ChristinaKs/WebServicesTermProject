@@ -14,6 +14,15 @@ function handleGetAllWishlistItems(Request $request, Response $response, array $
     $response_code = HTTP_OK;
     $wishlist_model = new WishlistModel();
 
+    $input_page_number = filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT);
+    $input_per_page = filter_input(INPUT_GET, "per_page", FILTER_VALIDATE_INT);
+
+    // Set default values if one of the following was invalid.
+    $page_number = ($input_page_number > 0) ? $input_page_number : 1;
+    $per_page = ($input_per_page > 0) ? $input_per_page : 3;
+
+    $wishlist_model->setPaginationOptions($page_number, $per_page);
+
     $wishlist_items = $wishlist_model->getAllWishlistItems();
  
     $requested_format = $request->getHeader('Accept');

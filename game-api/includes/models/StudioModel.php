@@ -20,7 +20,7 @@ class StudioModel extends BaseModel{
      */
     public function getAllStudios(){
         $sql = "SELECT * FROM gamestudio";
-        $data = $this->rows($sql);
+        $data = $this->paginate($sql);
         return $data;
     }
 

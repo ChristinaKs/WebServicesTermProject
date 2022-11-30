@@ -10,7 +10,7 @@ class WishlistModel extends BaseModel {
 
     public function getAllWishlistItems() {
         $sql = "SELECT * FROM wishlistitem";
-        $data = $this->rows($sql);
+        $data = $this->paginate($sql);
         return $data;
     }
 

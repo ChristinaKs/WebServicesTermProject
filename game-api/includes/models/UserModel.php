@@ -10,7 +10,7 @@ class UserModel extends BaseModel {
 
     public function getAllUsers() {
         $sql = "SELECT * FROM user";
-        $data = $this->rows($sql);
+        $data = $this->paginate($sql);
         return $data;
     }
 

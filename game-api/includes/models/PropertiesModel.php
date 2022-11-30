@@ -10,7 +10,7 @@ class PropertiesModel extends BaseModel {
 
     public function getAllProperties() {
         $sql = "SELECT * FROM owneditem";
-        $data = $this->rows($sql);
+        $data = $this->paginate($sql);
         return $data;
     }
 
