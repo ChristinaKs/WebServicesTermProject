@@ -7,6 +7,7 @@ use Slim\Factory\AppFactory;
 require_once __DIR__ . './../models/BaseModel.php';
 require_once __DIR__ . './../models/StudioModel.php';
 require_once __DIR__ . './../models/GameModel.php';
+require_once __DIR__ . './../models/WSLoggingModel.php';
 
 // Callback for HTTP GET /studios
 //-- Supported filtering operation: By developer, by pubisher and by location

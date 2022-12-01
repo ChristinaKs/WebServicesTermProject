@@ -6,6 +6,7 @@ use Slim\Factory\AppFactory;
 
 require_once __DIR__ . './../models/BaseModel.php';
 require_once __DIR__ . './../models/GamesModel.php';
+require_once __DIR__ . './../models/WSLoggingModel.php';
 
 function handleGetAllGames(Request $request, Response $response, array $args) {
     $games = array();
