@@ -2,7 +2,6 @@
 
 /**
  * A wrapper class for the PDO MySQL API.
- * This class can be extended for further customization.
  */
 class BaseModel {
 

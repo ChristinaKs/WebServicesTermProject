@@ -6,6 +6,7 @@ use Slim\Factory\AppFactory;
 
 require_once __DIR__ . './../models/BaseModel.php';
 require_once __DIR__ . './../models/WishlistModel.php';
+require_once __DIR__ . './../models/WSLoggingModel.php';
 
 // Get all properties
 function handleGetAllWishlistItems(Request $request, Response $response, array $args) {
