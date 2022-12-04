@@ -1,5 +1,3 @@
-<!-- TAKE A GAWNDDAMN LOOK AT THIS -->
-
 <?php
 
 /**
@@ -7,7 +5,7 @@
  *
  * @author Sleiman Rabah
  */
-class UserModel extends BaseModel {
+class WSUserModel extends BaseModel {
 
     private $table_name = "ws_users";
 

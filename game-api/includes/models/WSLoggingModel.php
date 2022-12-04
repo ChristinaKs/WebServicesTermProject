@@ -1,5 +1,3 @@
-<!-- TAKE A GAWDDAMN LOOK AT THIS -->
-
 <?php
 
 /*

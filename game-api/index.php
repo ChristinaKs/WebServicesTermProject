@@ -10,6 +10,10 @@ require_once './includes/helpers/Paginator.php';
 require_once './includes/helpers/helper_functions.php';
 require_once './includes/helpers/JWTManager.php';
 
+define('APP_BASE_DIR', __DIR__);
+// IMPORTANT: This file must be added to your .ignore file. 
+define('APP_ENV_CONFIG', 'config.env');
+
 //--Step 1) Instantiate App.
 $app = AppFactory::create();
 
