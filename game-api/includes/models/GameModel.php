@@ -48,15 +48,27 @@ class GameModel extends BaseModel {
 
         //-- First, we add to the WHERE clause the ID of the studio
         // for which we are fetching the list of games 
-        $sql = "SELECT * FROM game WHERE GameStudioId =:GameStudioId ";
-        $whereValues["GameStudioId"] = $studio_id;
+        if (isset($studio_id)) {
+            $sql = "SELECT * FROM game WHERE GameStudioId =:GameStudioId ";
+            $whereValues["GameStudioId"] = $studio_id;
+        }
 
-        //-- Has the GameName filter been specified in the request's 
-        // query string param along with a value? 
+        //GameName
         if (isset($filters_params['GameName'])) {
             $sql .= " AND GameName LIKE :GameName ";
             $whereValues["GameName"] = $filters_params['GameName'] . "%";
         }
+        //MPA
+        if (isset($filters_params['MPAARating'])) {
+            $sql .= " AND MPAARating LIKE :MPAARating ";
+            $whereValues["MPAARating"] = $filters_params['MPAARating'] . "%";
+        }
+        //Platform
+        if (isset($filters_params['Platform'])) {
+            $sql .= " AND Platform LIKE :Platform ";
+            $whereValues["Platform"] = $filters_params['Platform'] . "%";
+        }
+
         if (isset($filters_params['GameId'])) {
             $sql .= " AND GameId LIKE :GameId ";
             //$sql .= " OR GameId LIKE :GameId ";

@@ -13,6 +13,7 @@ function handleGetAllGames(Request $request, Response $response, array $args) {
     $response_data = array();
     $response_code = HTTP_OK;
     $games_model = new GamesModel();
+    $games_model_filtered = new GameModel();
 
     $input_page_number = filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT);
     $input_per_page = filter_input(INPUT_GET, "per_page", FILTER_VALIDATE_INT);
@@ -23,7 +24,19 @@ function handleGetAllGames(Request $request, Response $response, array $args) {
 
     $games_model->setPaginationOptions($page_number, $per_page);
 
-    $games = $games_model->getAllGames();
+    if (isset($filters_params['GameName']) ||
+        isset($filters_params['MPAARating']) ||
+        isset($filters_params['Platform']) ||
+        isset($filters_params['GameStudioId']) ||
+        isset($filters_params['GameId'])
+    )
+    {
+        $games = $games_model_filtered->getGamesFiltered($filters_params, $filters_params['GameStudioId']);
+    }
+    else
+    {
+        $games = $games_model->getAllGames();
+    }
  
     $requested_format = $request->getHeader('Accept');
    
@@ -39,6 +52,7 @@ function handleGetAllGames(Request $request, Response $response, array $args) {
 
 function handleCreateGame(Request $request, Response $response, array $args)
 {
+    $response_data = array();
     $response_code = HTTP_OK;
     $games_model = new GamesModel();
 
@@ -92,6 +106,7 @@ function handleCreateGame(Request $request, Response $response, array $args)
 
 function handleUpdateGame(Request $request, Response $response, array $args)
 {
+    $response_data = array();
     $response_code = HTTP_OK;
     $games_model = new GamesModel();
 
