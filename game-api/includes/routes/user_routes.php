@@ -6,6 +6,7 @@ use Slim\Factory\AppFactory;
 
 require_once __DIR__ . './../models/BaseModel.php';
 require_once __DIR__ . './../models/UserModel.php';
+require_once __DIR__ . './../models/WSLoggingModel.php';
 
 // Get all users
 function handleGetAllUsers(Request $request, Response $response, array $args) {
@@ -13,6 +14,15 @@ function handleGetAllUsers(Request $request, Response $response, array $args) {
     $response_data = array();
     $response_code = HTTP_OK;
     $user_model = new UserModel();
+
+    $input_page_number = filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT);
+    $input_per_page = filter_input(INPUT_GET, "per_page", FILTER_VALIDATE_INT);
+
+    // Set default values if one of the following was invalid.
+    $page_number = ($input_page_number > 0) ? $input_page_number : 1;
+    $per_page = ($input_per_page > 0) ? $input_per_page : 3;
+
+    $user_model->setPaginationOptions($page_number, $per_page);
 
     $users = $user_model->getAllUsers();
  
@@ -37,11 +47,15 @@ function handleDeleteUser(Request $request, Response $response, array $args) {
 
     $user_id = $args["user_id"];
     if (isset($user_id)) {
-
-        $user_model->deleteUser($user_id);
-        $response_data = makeCustomJSONsuccess("resourceDeleted", "The specified user was deleted Successfully.");
-        $response->getBody()->write($response_data);
-        return $response->withStatus(HTTP_OK);
+        if(!$user_model->getUserById($user_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response_code = HTTP_NOT_FOUND;
+        } else {
+            $user_model->deleteUser($user_id);
+            $response_data = makeCustomJSONsuccess("userDeleted", "The specified user was deleted Successfully.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_OK);
+        }
     } else{
         $response_data = makeCustomJSONError("badRequest", "No user id was provided.");
         $response->getBody()->write($response_data);
@@ -121,9 +135,17 @@ function handleCreateUser(Request $request, Response $response, array $args) {
 
         $user_model->createUser($new_user);
     }
-
-    $response->getBody()->write($user_name);
-    return $response;
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("userAdded", "The specified user was Successfully created.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error creating the user.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
 }
 
 function handleUpdateUser(Request $request, Response $response, array $args) {
@@ -152,15 +174,33 @@ function handleUpdateUser(Request $request, Response $response, array $args) {
         $user_lname = $existing_user["LastName"];
         $user_cont = $existing_user["ContactInfo"];
 
-        $existing_artist = array(
-            "Username" => $user_name
+        $existing_user = array(
+            "Email" => $user_email,
+            "Username" => $user_name,
+            "Password" => $user_pass,
+            "FirstName" => $user_fname,
+            "LastName" => $user_lname,
+            "ContactInfo" => $user_cont
         );
 
         $user_model->updateUser($existing_user, array("UserId" => $user_id));
+        if(!$user_model->getUserById($user_id)) {
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
     }
-
-    $response->getBody()->write($user_name);
-    return $response;
+    if (isset($response)) {
+        $response_data = makeCustomJSONsuccess("userUpdated", "The specified user was Successfully edited.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_OK);
+    } else {
+        $response_data = makeCustomJSONError("badRequest", "There was an error editing the user.");
+        $response->getBody()->write($response_data);
+        return $response->withStatus(HTTP_BAD_REQUEST);
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
 }
 
 //GTS

@@ -2,7 +2,6 @@
 
 /**
  * A wrapper class for the PDO MySQL API.
- * This class can be extended for further customization.
  */
 class BaseModel {
 
@@ -10,14 +9,26 @@ class BaseModel {
      * holds a database connection.
      */
     protected $db;
-    
+
+    /**
+     * The index of the current page.
+     * @var int
+     */
+    private $current_page = 1;
+
+    /**
+     * Holds the number of records per page.
+     * @var int
+     */
+    private $records_per_page = 3;
+
     /**
      * Instantiates the BaseModel.
      * @global array $db_options    database connection options.
      * @param array $options        Optional array of PDO options
      * @throws Exception 
      */
-    public function __construct($options=[]) {
+    public function __construct($options = []) {
         // Global array defined in includes/app_constants.php
         global $db_options;
         if (!isset($db_options['database'])) {
@@ -55,6 +66,32 @@ class BaseModel {
      */
     protected function getPdo() {
         return $this->db;
+    }
+
+    /**
+     * Paginates a result set given a page number and number of records per page.
+     * 
+     * @param string $sql the SQL query to be executed.
+     * @param array $args fields filtering options.
+     * @param int $fetchMode 
+     * @return array An array containing the fetched set of records.
+     */
+    protected function paginate($sql, $args = [], $fetchMode = PDO::FETCH_ASSOC) {
+        // 1) Get the number of records that might be returned by the provided query.
+        $total_no_of_records = $this->count($sql, $args);
+        
+        // 2) Configure the paginator.
+        $paginator = new Paginator($this->current_page, $this->records_per_page, $total_no_of_records);
+        $offset = $paginator->getOffset();
+        
+        // 3) Add the LIMIT clause to the query.
+        $sql .= " LIMIT ${offset}, $this->records_per_page";
+        // 4) Get the pagination information.
+        $data = $paginator->getPaginationInfo();
+        // 5) Add the fetched data from the query with the pagination settings. 
+        // The result records are available via the data key in the JSON array. 
+        $data["data"] = $this->run($sql, $args)->fetchAll($fetchMode);
+        return $data;
     }
 
     /**
@@ -273,6 +310,11 @@ class BaseModel {
         $stmt = $this->run("TRUNCATE TABLE $table");
 
         return $stmt->rowCount();
+    }
+
+    public function setPaginationOptions(int $current_page, int $records_per_page): void {
+        $this->current_page = $current_page;
+        $this->records_per_page = $records_per_page;
     }
 
 }
