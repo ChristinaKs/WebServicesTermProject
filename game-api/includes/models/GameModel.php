@@ -45,36 +45,62 @@ class GameModel extends BaseModel {
      */
     public function getGamesFiltered($filters_params, $studio_id) {
         $whereValues = Array();
-
+        $hasWhere = false;
+        $sql = "SELECT * FROM game";
         //-- First, we add to the WHERE clause the ID of the studio
         // for which we are fetching the list of games 
         if (isset($studio_id)) {
-            $sql = "SELECT * FROM game WHERE GameStudioId =:GameStudioId ";
+            if ($hasWhere)
+                $sql .= " AND";
+            else
+                $sql .= " WHERE";
+            $hasWhere = true;
+            $sql .= " GameStudioId = :GameStudioId";
             $whereValues["GameStudioId"] = $studio_id;
         }
 
         //GameName
         if (isset($filters_params['GameName'])) {
-            $sql .= " AND GameName LIKE :GameName ";
+            if ($hasWhere)
+                $sql .= " AND";
+            else
+                $sql .= " WHERE";
+            $hasWhere = true;
+            $sql .= " GameName LIKE :GameName";
             $whereValues["GameName"] = $filters_params['GameName'] . "%";
         }
         //MPA
         if (isset($filters_params['MPAARating'])) {
-            $sql .= " AND MPAARating LIKE :MPAARating ";
+            if ($hasWhere)
+                $sql .= " AND";
+            else
+                $sql .= " WHERE";
+            $hasWhere = true;
+            $sql .= " MPAARating LIKE :MPAARating";
             $whereValues["MPAARating"] = $filters_params['MPAARating'] . "%";
         }
         //Platform
         if (isset($filters_params['Platform'])) {
-            $sql .= " AND Platform LIKE :Platform ";
+            if ($hasWhere)
+                $sql .= " AND";
+            else
+                $sql .= " WHERE";
+            $hasWhere = true;
+            $sql .= " Platform LIKE :Platform";
             $whereValues["Platform"] = $filters_params['Platform'] . "%";
         }
 
         if (isset($filters_params['GameId'])) {
-            $sql .= " AND GameId LIKE :GameId ";
+            if ($hasWhere)
+                $sql .= " AND";
+            else
+                $sql .= " WHERE";
+            $hasWhere = true;
+            $sql .= " GameId LIKE :GameId";
             //$sql .= " OR GameId LIKE :GameId ";
             $whereValues["GameId"] = $filters_params['GameId'] . "%";
         }
-        //echo "$sql";exit;
+        echo "$sql";exit;
         $data = $this->run($sql, $whereValues)->fetchAll();
         return $data;
     }
