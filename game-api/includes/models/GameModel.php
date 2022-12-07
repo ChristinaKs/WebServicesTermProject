@@ -100,7 +100,6 @@ class GameModel extends BaseModel {
             //$sql .= " OR GameId LIKE :GameId ";
             $whereValues["GameId"] = $filters_params['GameId'] . "%";
         }
-        echo "$sql";exit;
         $data = $this->run($sql, $whereValues)->fetchAll();
         return $data;
     }
