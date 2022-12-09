@@ -96,6 +96,69 @@ function handleGetPropertiesById(Request $request, Response $response, array $ar
     return $response->withStatus($response_code);
 }
 
+function handleGetPropertiesByUserId(Request $request, Response $response, array $args){
+    $property_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $prop_model = new PropertiesModel();
+
+    $user_id = $args['user_id'];
+    if (isset($user_id)) {
+        $user_info = $prop_model->getPropertiesByUserId($user_id);
+        if (!$user_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+    // Handle serve-side content negotiation and produce the requested representation.    
+    $requested_format = $request->getHeader('Accept');
+
+    //-- Verify the requested resource representation.    
+    if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+        $response_data = json_encode($user_info, JSON_INVALID_UTF8_SUBSTITUTE);
+    } else {
+        $response_data = json_encode(getErrorUnsupportedFormat());
+        $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+    }
+    $response->getBody()->write($response_data);
+    return $response->withStatus($response_code);
+}
+
+function handleGetPropertiesAndUserById(Request $request, Response $response, array $args){
+    $user_gts_info = array();
+    $response_data = array();
+    $response_code = HTTP_OK;
+    $property_model = new PropertiesModel();
+
+    $property_id = $args['owned_id'];
+    $user_id = $args['user_id'];
+    if (isset($property_id, $user_id)) {
+        $user_properties_info = $property_model->getPropertiesAndUserById($property_id, $user_id);
+        if (!$user_properties_info) {
+            // No matches found?
+            $response_data = makeCustomJSONError("resourceNotFound", "No matching record was found for the specified property or user.");
+            $response->getBody()->write($response_data);
+            return $response->withStatus(HTTP_NOT_FOUND);
+        }
+    }
+
+        // Handle serve-side content negotiation and produce the requested representation.
+        $requested_format = $request->getHeader('Accept');
+
+        //-- Verify the requested resource representation.    
+        if ($requested_format[0] === APP_MEDIA_TYPE_JSON) {
+            $response_data = json_encode($user_properties_info, JSON_INVALID_UTF8_SUBSTITUTE);
+        } else {
+            $response_data = json_encode(getErrorUnsupportedFormat());
+            $response_code = HTTP_UNSUPPORTED_MEDIA_TYPE;
+        }
+        $response->getBody()->write($response_data);
+        return $response->withStatus($response_code);
+}
+
 function handleCreateProperty(Request $request, Response $response, array $args) {
     $response_code = HTTP_OK;
     $prop_model = new PropertiesModel();

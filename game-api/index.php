@@ -23,27 +23,27 @@ $app->addBodyParsingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
 //-- Step 3) Base Path
-$app->setBasePath("/game-api");
+$app->setBasePath("/game-api/game-api");
 
 
 $jwt_secret = JWTManager::getSecretKey();
-$api_base_path = "/game-api";
-$app->add(new Tuupola\Middleware\JwtAuthentication([
-            'secret' => $jwt_secret,
-            'algorithm' => 'HS256',
-            'secure' => false, // only for localhost for prod and test env set true            
-            "path" => $api_base_path, // the base path of the API
-            "attribute" => "decoded_token_data",
-            "ignore" => ["$api_base_path/token", "$api_base_path/account"], // makes only certain files private
-            "error" => function ($response, $arguments) {
-                $data["status"] = "error";
-                $data["message"] = $arguments["message"];
-                $response->getBody()->write(
-                        json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
-                );
-                return $response->withHeader("Content-Type", "application/json;charset=utf-8");
-            }
-        ]));
+$api_base_path = "/game-api/game-api";
+// $app->add(new Tuupola\Middleware\JwtAuthentication([
+//             'secret' => $jwt_secret,
+//             'algorithm' => 'HS256',
+//             'secure' => false, // only for localhost for prod and test env set true            
+//             "path" => $api_base_path, // the base path of the API
+//             "attribute" => "decoded_token_data",
+//             "ignore" => ["$api_base_path/token", "$api_base_path/account"], // makes only certain files private
+//             "error" => function ($response, $arguments) {
+//                 $data["status"] = "error";
+//                 $data["message"] = $arguments["message"];
+//                 $response->getBody()->write(
+//                         json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+//                 );
+//                 return $response->withHeader("Content-Type", "application/json;charset=utf-8");
+//             }
+//         ]));
 
 
 //-- Step 4) Include the files containing the definitions of the callbacks.
@@ -102,6 +102,8 @@ $app->get("/properties/{owned_id}", "handleGetPropertiesById");
 $app->delete("/properties/{owned_id}", "handleDeleteProperty");
 $app->put("/properties/{owned_id}", "handleUpdateProperty");
 
+$app->get("/users/{user_id}/properties", "handleGetPropertiesByUserId");
+$app->get("/users/{user_id}/properties/{owned_id}", "handleGetPropertiesAndUserById");
 
 // Wishlist routes
 $app->get("/wishlists", "handleGetAllWishlistItems");

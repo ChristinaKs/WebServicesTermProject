@@ -121,4 +121,10 @@ class UserModel extends BaseModel {
         $data = $this->run($sql, [$user_id, $review_id]);
         return $data;
     }
+
+    // public function getWhereLikeDeveloper($developer){
+    //     $sql = "SELECT * FROM gamestudio WHERE developer LIKE :developer";
+    //     $data = $this->run($sql, ["developer" => $developer . "%"])->fetchAll();
+    //     return $data;
+    // }
 }

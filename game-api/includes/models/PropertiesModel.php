@@ -19,6 +19,7 @@ class PropertiesModel extends BaseModel {
         $data = $this->run($sql, [$property_id])->fetch();
         return $data;
     }
+
         /**
      * Create a new user.
      * @param string $name the name of the artist.
@@ -46,6 +47,18 @@ class PropertiesModel extends BaseModel {
     public function deleteProperty($property_id) {
         $sql = "DELETE FROM owneditem WHERE OwnedId = ?";
         $data = $this->run($sql, [$property_id]);
+        return $data;
+    }
+
+    public function getPropertiesByUserId($user_id) {
+        $sql = "SELECT * FROM owneditem WHERE UserId = ?";
+        $data = $this->run($sql, [$user_id])->fetchAll();
+        return $data;
+    }
+
+    public function getPropertiesAndUserById($property_id, $user_id) {
+        $sql = "SELECT * FROM owneditem WHERE OwnedId = ? AND UserId = ?";
+        $data = $this->run($sql, [$property_id, $user_id])->fetch();
         return $data;
     }
 }

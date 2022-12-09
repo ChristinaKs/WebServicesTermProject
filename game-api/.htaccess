@@ -1,7 +1,7 @@
 RewriteEngine On
 # Change the path of your sub directory.
 # Also, make sure the name of sub directory is specified without a trailing slash (/)
-RewriteBase /game-api
+RewriteBase /game-api/game-api
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
